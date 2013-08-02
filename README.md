@@ -43,6 +43,10 @@ If you're not using domains it will gracefully ignore them.
 
 `pg-query` uses `pg.defaults` and/or [environment variables](http://www.postgresql.org/docs/9.2/static/libpq-envars.html) to connect.
 
+`pg-query` uses __a random pooled database client for each query__.  
+If you're using a transaction (eg `BEGIN`/`COMMIT`) you need to check out a client from the pool manually.
+__Repeat__: DO NOT USE THIS FOR RUNNING TRANSACTIONS
+
 ## todo
 
 - Accept query object
