@@ -22,6 +22,7 @@ query('SELECT NOW()', function(err, rows, result) {
 Notice the callback is called with 3 parameters.  
 First the `error` argument.  
 Next the __rows__ returned by the query.
+
 Finally the full __result__ object which contains the same reference to the rows at `result.rows`
 
 ## more examples
