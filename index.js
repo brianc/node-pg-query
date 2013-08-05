@@ -5,8 +5,13 @@ var pg = require('pg');
 var ok = require('okay');
 
 var query = module.exports = function(text, values, cb) {
-  //normalize params
-  if(typeof values == 'function') {
+  if(text.toQuery) {
+    cb = values;
+    var q = text.toQuery();
+    text = q.text;
+    values = q.values;
+  } else if(typeof values == 'function') {
+    //normalize params
     cb = values;
     values = [];
   }

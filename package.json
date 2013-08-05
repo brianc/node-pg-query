@@ -19,9 +19,13 @@
   "devDependencies": {
     "mocha": "~1.12.0",
     "pg": "~2.3.1",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "sql": "~0.26.0"
   },
   "peerDependencies": {
     "pg": "2.3.x"
+  },
+  "dependencies": {
+    "okay": "~0.3.0"
   }
 }

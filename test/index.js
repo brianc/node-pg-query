@@ -3,6 +3,7 @@ var ok = require('okay');
 var util = require('util');
 var query = require('../');
 var async = require('async');
+var sql = require('sql');
 
 describe('query', function() {
   describe('with no values', function() {
@@ -44,6 +45,28 @@ describe('query', function() {
           done();
         });
       });
+    });
+  });
+
+  describe('#toQuery interface', function() {
+    before(function(done) {
+      query('CREATE TABLE "stuff" (id SERIAL PRIMARY KEY, name TEXT)', done);
+    });
+    after(function(done) {
+      query('DROP TABLE "stuff"', done);
+    });
+    it('works', function(done) {
+      var table = sql.define({
+        name: 'stuff',
+        columns: ['id', 'name']
+      });
+      query(table.insert({name: 'brian'}), ok(done, function() {
+        query(table.select(), ok(done, function(rows) {
+          assert.equal(rows.length, 1);
+          assert.equal(rows[0].name, 'brian');
+          done();
+        }));
+      }));
     });
   });
 });
