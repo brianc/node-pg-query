@@ -15,7 +15,7 @@ var query = module.exports = function(text, values, cb) {
     cb = values;
     values = [];
   }
-  pg.connect(ok(cb, function(client, done) {
+  pg.connect(query.connectionParameters, ok(cb, function(client, done) {
     client.query(text, values, ok(cb, function(res) {
       done();
       cb(null, res.rows, res);

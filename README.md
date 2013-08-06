@@ -27,6 +27,7 @@ Finally the full __result__ object which contains the same reference to the rows
 ## more examples
 ```js
 var query = require('pg-query');
+query.connectionParameters = 'postgres://user:password@host:5432/database';
 
 //accepts optional array of values as 2nd parameter for parameterized queries
 query('SELECT $1::text as name', ['brian'], function(err, rows, result) {
