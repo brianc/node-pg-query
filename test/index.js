@@ -69,4 +69,23 @@ describe('query', function() {
       }));
     });
   });
+
+  describe('before hook', function() {
+    after(function() {
+      query.before = function() {}
+    });
+    it('calls hook', function(done) {
+      var queryText = 'SELECT $1::text as name';
+      query.before = function(query, client) {
+        assert(query);
+        assert(client);
+        assert.equal(query.text, queryText);
+        assert.equal(query.values.length, 1);
+        assert(client instanceof require('pg').Client);
+        done();
+      };
+      query(queryText, ['brian'], function() {
+      });
+    });
+  });
 });
