@@ -82,7 +82,9 @@ describe('query', function() {
         assert.equal(query.text, queryText);
         assert.equal(query.values.length, 1);
         assert(client instanceof require('pg').Client);
-        done();
+        query.on('end', function() {
+          done();
+        });
       };
       query(queryText, ['brian'], function() {
       });
