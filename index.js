@@ -16,10 +16,15 @@ var query = module.exports = function(text, values, cb) {
     values = [];
   }
   pg.connect(query.connectionParameters, ok(cb, function(client, done) {
-    var q = client.query(text, values, ok(cb, function(res) {
+    var onError = function(err) {
+      done(err);
+      cb(err);
+    };
+    var onSuccess = function(res) {
       done();
       cb(null, res.rows, res);
-    }));
+    };
+    var q = client.query(text, values, ok(onError, onSuccess));
     query.before(q, client);
   }));
 };

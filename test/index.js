@@ -4,6 +4,8 @@ var util = require('util');
 var query = require('../');
 var async = require('async');
 var sql = require('sql');
+var pg = require('pg');
+pg.defaults.poolSize = 1;
 
 describe('query', function() {
   describe('with no values', function() {
@@ -67,6 +69,16 @@ describe('query', function() {
           done();
         }));
       }));
+    });
+  });
+
+  describe('release on error', function() {
+    it('releases client', function(done) {
+      var queryText = 'SELECT ASLKJDLKSFJDS';
+      query(queryText, function(err) {
+        assert(err);
+        done();
+      });
     });
   });
 
