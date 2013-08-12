@@ -1,6 +1,6 @@
 {
   "name": "pg-query",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Execute postgres queries simply.",
   "main": "index.js",
   "scripts": {
