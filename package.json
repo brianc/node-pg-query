@@ -24,5 +24,9 @@
   },
   "dependencies": {
     "okay": "~0.3.0"
+  },
+  "peerDependencies": {
+    "pg": "*",
+    "pg.js": "*"
   }
 }
