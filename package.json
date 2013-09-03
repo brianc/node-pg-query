@@ -18,15 +18,11 @@
   "license": "MIT",
   "devDependencies": {
     "mocha": "~1.12.0",
-    "pg": "~2.3.1",
     "async": "~0.2.9",
-    "sql": "~0.26.0"
+    "sql": "~0.26.0",
+    "pg": "*"
   },
   "dependencies": {
     "okay": "~0.3.0"
-  },
-  "peerDependencies": {
-    "pg": "*",
-    "pg.js": "*"
   }
 }
