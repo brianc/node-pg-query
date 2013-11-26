@@ -3,6 +3,7 @@ var ok = require('okay');
 var util = require('util');
 var query = require('../');
 var async = require('async');
+var when = require('when');
 var sql = require('sql');
 var pg = require('pg');
 pg.defaults.poolSize = 1;
@@ -99,6 +100,31 @@ describe('query', function() {
         });
       };
       query(queryText, ['brian'], function() {
+      });
+    });
+  });
+
+  describe('promise', function(){
+    it('returns a promise if no callback is passed', function(done) {
+      var promise = query('SELECT NOW() as when');
+      assert(when.isPromise(promise));
+      promise.then(function(result) {
+        assert(util.isArray(result.rows));
+        assert.equal(result.rows.length, 1);
+        done();
+      }, function(err) {
+        done(err);
+      });
+    });
+
+    it('does not return a promise if callback is passed', function(done) {
+      var noPromise = query('SELECT NOW() as when', function(err, rows, result) {
+        if(err) return done(err);
+        assert(!when.isPromise(noPromise));
+        assert(util.isArray(rows));
+        assert.equal(rows.length, 1);
+        assert.equal(rows, result.rows);
+        done();
       });
     });
   });
