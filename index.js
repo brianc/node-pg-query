@@ -11,6 +11,7 @@ try {
 }
 
 var ok = require('okay');
+var when = require('when');
 
 var query = module.exports = function(text, values, cb) {
   if(text.toQuery) {
@@ -23,18 +24,31 @@ var query = module.exports = function(text, values, cb) {
     cb = values;
     values = [];
   }
+  var defer;
+  if(typeof cb === 'undefined') {
+    defer = when.defer();
+  }
   pg.connect(query.connectionParameters, ok(cb, function(client, done) {
     var onError = function(err) {
       done(err);
-      cb(err);
+      if(cb) {
+        cb(err);
+      } else {
+        defer.reject(err);
+      }
     };
     var onSuccess = function(res) {
       done();
-      cb(null, res.rows, res);
+      if(cb) {
+        cb(null, res.rows, res);
+      } else {
+        defer.resolve(res);
+      }
     };
     var q = client.query(text, values, ok(onError, onSuccess));
     query.before(q, client);
   }));
+  return defer && defer.promise;
 };
 
 query.before = function(query, client) {

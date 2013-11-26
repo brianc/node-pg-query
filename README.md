@@ -19,9 +19,9 @@ query('SELECT NOW()', function(err, rows, result) {
 
 ```
 
-Notice the callback is called with 3 parameters.  
-First the `error` argument.  
-Next the __rows__ returned by the query.  
+Notice the callback is called with 3 parameters.
+First the `error` argument.
+Next the __rows__ returned by the query.
 Finally the full __result__ object which contains the same reference to the rows at `result.rows`
 
 ## more examples
@@ -31,21 +31,38 @@ query.connectionParameters = 'postgres://user:password@host:5432/database';
 
 //accepts optional array of values as 2nd parameter for parameterized queries
 query('SELECT $1::text as name', ['brian'], function(err, rows, result) {
-  
+
 });
+```
+
+If a callback is not passed, a promise is returned that will be resolved with `result`
+
+```js
+var query = require('pg-query');
+query.connectionParameters = 'postgres://user:password@host:5432/database';
+
+//accepts optional array of values as 2nd parameter for parameterized queries
+var promise = query('SELECT $1::text as name', ['brian']);
+function onSuccess(result) {
+
+}
+function onError(error) {
+
+}
+promise.then(onSuccess, onError);
 ```
 
 ## comments
 
-`pg-query` is domain aware so your callback will always be called in the correct domain.  
+`pg-query` is domain aware so your callback will always be called in the correct domain.
 If you're not using domains it will gracefully ignore them.
 
 `pg-query` uses whichever version of node-postgres you have installed in your project.
 
 `pg-query` uses `pg.defaults` and/or [environment variables](http://www.postgresql.org/docs/9.2/static/libpq-envars.html) to connect.
 
-`pg-query` uses __a random pooled database client for each query__.  
-If you're using a transaction (eg `BEGIN`/`COMMIT`) you need to check out a client from the pool manually.  
+`pg-query` uses __a random pooled database client for each query__.
+If you're using a transaction (eg `BEGIN`/`COMMIT`) you need to check out a client from the pool manually.
 __Repeat__: DO NOT USE THIS FOR RUNNING TRANSACTIONS
 
 ## todo
