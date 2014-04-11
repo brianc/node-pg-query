@@ -84,12 +84,16 @@ describe('query', function() {
   });
 
   describe('object config', function() {
-    it('runs query properly', function(done) {
+    it.only('runs query properly', function(done) {
       var q = {
         name: 'get time',
-        text: 'SELECT NOW()'
+        text: 'SELECT $1::text as name',
+        values: ['brian']
       }
-      query(q, done)
+      query(q, ok(done, function(rows) {
+        assert.equal(rows[0].name, 'brian')
+        done()
+      }))
     })
   })
 
