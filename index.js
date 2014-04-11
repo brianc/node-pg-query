@@ -13,21 +13,35 @@ try {
 var ok = require('okay');
 var when = require('when');
 
+var Query = function() {
+  this.name = null;
+  this.text = null;
+  this.values = null;
+}
+
 var query = module.exports = function(text, values, cb) {
-  if(text.toQuery) {
-    cb = values;
-    var q = text.toQuery();
-    text = q.text;
-    values = q.values;
-  } else if(typeof values == 'function') {
-    //normalize params
+  var q = new Query();
+
+  //normalize params
+  if(typeof values == 'function') {
     cb = values;
     values = [];
   }
+
+  if(typeof text === 'string') {
+    q.text = text;
+    q.values = values;
+  } else if(typeof text === 'object') {
+    //support toQuery and object style interface
+    q = text.toQuery ? text.toQuery() : text;
+  }
+
+
   var defer;
-  if(typeof cb === 'undefined') {
+  if(typeof cb === 'undefined' && !q.submit) {
     defer = when.defer();
   }
+
   pg.connect(query.connectionParameters, ok(cb, function(client, done) {
     var onError = function(err) {
       done(err);
@@ -45,10 +59,13 @@ var query = module.exports = function(text, values, cb) {
         defer.resolve(res);
       }
     };
-    var q = client.query(text, values, ok(onError, onSuccess));
-    query.before(q, client);
+    var qry = client.query(q, ok(onError, onSuccess));
+    query.before(qry, client);
   }));
-  return defer && defer.promise;
+  if(defer) {
+    return defer.promise;
+  }
+  return q;
 };
 
 query.before = function(query, client) {
