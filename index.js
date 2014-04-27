@@ -71,3 +71,13 @@ var query = module.exports = function(text, values, cb) {
 query.before = function(query, client) {
 
 };
+
+query.first = function(text, values, cb) {
+  if(typeof values == 'function') {
+    cb = values
+    values = []
+  }
+  query(text, values, function(err, rows) {
+    return cb(err, rows ? rows[0] : null)
+  })
+}
