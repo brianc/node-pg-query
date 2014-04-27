@@ -52,6 +52,30 @@ function onError(error) {
 promise.then(onSuccess, onError);
 ```
 
+## query.first(text, [values], [cb])
+
+Often I find I'm getting a single row by ID.  `query.first` allows for easy composition into async structures by returning the first row of the query or null if there are no rows.  Let me show you...
+
+```js
+//this is the old way:
+var getUserById = function(id, cb) {
+  query('SELECT * FROM "user" WHERE id = $1', [id], function(err, rows) {
+    cb(err, rows ? rows[0] : null)
+  })
+}
+
+//this is much easier
+var getUserById = function(id, cb) {
+  query.first('SELECT * FROM "user" WHERE id = $1', id, cb)
+}
+
+//or even this if you're crazy
+var getUserById = query.first.bind(query, 'SELECT * FROM "user" WHERE id = $1')
+```
+
+`query.first` does a bit of argument type checking. If you pass an array as the `values` argument it is passed to the query unchanged. If you pass anything else truthy it is wrapped inside an array. This makes `query.first` easier to compose and use.
+
+
 ## comments
 
 `pg-query` is domain aware so your callback will always be called in the correct domain.

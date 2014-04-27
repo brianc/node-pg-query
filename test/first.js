@@ -38,6 +38,15 @@ describe('query.first', function() {
     }))
   })
 
+  it('turns non-array values into array values for you', function(done) {
+    query.first('SELECT name FROM something WHERE name = $1', 'brian', ok(done, function(res) {
+      assert.equal(res.name, 'brian')
+      done()
+    }))
+  })
+
+  //keep this test last. it blows the connection away on error
+  //and the temp table is dropped
   it('handles errors as you would expect', function(done) {
     query.first('SELELKJSDLKSDJF SD F', function(err, res) {
       assert(err)
