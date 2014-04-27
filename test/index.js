@@ -19,6 +19,16 @@ describe('query', function() {
         done();
       });
     });
+
+    it('works with multiple statements (does not prepare)', function(done) {
+      query('SELECT NOW() as when; SELECT NOW() as when;', function(err, rows, result) {
+        if(err) return done(err);
+        assert(util.isArray(rows));
+        assert.equal(rows.length, 2);
+        assert.equal(rows, result.rows);
+        done();
+      });
+    });
   });
 
   describe('with values', function() {
