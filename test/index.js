@@ -53,10 +53,7 @@ describe('query', function() {
 
   describe('#toQuery interface', function() {
     before(function(done) {
-      query('CREATE TABLE IF NOT EXISTS "stuff" (id SERIAL PRIMARY KEY, name TEXT)', done);
-    });
-    after(function(done) {
-      query('DROP TABLE "stuff"', done);
+      query('CREATE TEMP TABLE "stuff" (id SERIAL PRIMARY KEY, name TEXT)', done);
     });
     it('works', function(done) {
       var table = sql.define({
@@ -84,7 +81,7 @@ describe('query', function() {
   });
 
   describe('object config', function() {
-    it.only('runs query properly', function(done) {
+    it('runs query properly', function(done) {
       var q = {
         name: 'get time',
         text: 'SELECT $1::text as name',
@@ -141,18 +138,5 @@ describe('query', function() {
         done();
       });
     });
-  });
-
-  var Cursor = require('pg-cursor')
-  describe('pg-cursor', function() {
-    it('works', function(done) {
-      var c = new Cursor('SELECT generate_series as num FROM generate_series(0, 5)')
-      var cursor = query(c)
-      cursor.read(6, function(err, rows) {
-        if(err) return done(err);
-        assert.equal(rows.length, 6)
-        done();
-      })
-    })
   });
 });
