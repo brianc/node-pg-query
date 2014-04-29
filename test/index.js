@@ -128,20 +128,19 @@ describe('query', function() {
   describe('promise', function(){
     it('returns a promise if no callback is passed', function(done) {
       var promise = query('SELECT NOW() as when');
-      assert(when.isPromise(promise));
-      promise.then(function(result) {
-        assert(util.isArray(result.rows));
+      assert(when.isPromiseLike(promise));
+      promise.spread(function(rows, result) {
+        assert(util.isArray(rows));
         assert.equal(result.rows.length, 1);
+        assert.equal(rows, result.rows);
         done();
-      }, function(err) {
-        done(err);
-      });
+      }).otherwise(done);
     });
 
     it('does not return a promise if callback is passed', function(done) {
       var noPromise = query('SELECT NOW() as when', function(err, rows, result) {
         if(err) return done(err);
-        assert(!when.isPromise(noPromise));
+        assert(!when.isPromiseLike(noPromise));
         assert(util.isArray(rows));
         assert.equal(rows.length, 1);
         assert.equal(rows, result.rows);

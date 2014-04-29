@@ -35,7 +35,7 @@ query('SELECT $1::text as name', ['brian'], function(err, rows, result) {
 });
 ```
 
-If a callback is not passed, a promise is returned that will be resolved with `result`
+If a callback is not passed, a promise is returned that will be resolved with `[rows, result]`
 
 ```js
 var query = require('pg-query');
@@ -43,13 +43,13 @@ query.connectionParameters = 'postgres://user:password@host:5432/database';
 
 //accepts optional array of values as 2nd parameter for parameterized queries
 var promise = query('SELECT $1::text as name', ['brian']);
-function onSuccess(result) {
+function onSuccess(rows, result) {
 
 }
 function onError(error) {
 
 }
-promise.then(onSuccess, onError);
+promise.spread(onSuccess, onError);
 ```
 
 ## query.first(text, [values], [cb])

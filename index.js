@@ -12,6 +12,7 @@ try {
 
 var ok = require('okay');
 var when = require('when');
+var nodefn = require('when/node');
 var util = require('util')
 
 var Query = function() {
@@ -41,24 +42,17 @@ var query = module.exports = function(text, values, cb) {
   var defer;
   if(typeof cb === 'undefined' && !q.submit) {
     defer = when.defer();
+    cb = nodefn.createCallback(defer.resolver);
   }
 
   pg.connect(query.connectionParameters, ok(cb, function(client, done) {
     var onError = function(err) {
       done(err);
-      if(cb) {
-        cb(err);
-      } else {
-        defer.reject(err);
-      }
+      cb(err);
     };
     var onSuccess = function(res) {
       done();
-      if(cb) {
-        cb(null, res.rows, res);
-      } else {
-        defer.resolve(res);
-      }
+      cb(null, res.rows, res);
     };
     var qry = client.query(q, ok(onError, onSuccess));
     query.before(qry, client);
