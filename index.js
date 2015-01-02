@@ -45,7 +45,7 @@ var query = module.exports = function(text, values, cb) {
     cb = nodefn.createCallback(defer.resolver);
   }
 
-  pg.connect(query.connectionParameters, ok(cb, function(client, done) {
+  (query.pg || pg).connect(query.connectionParameters, ok(cb, function(client, done) {
     var onError = function(err) {
       done(err);
       cb(err);

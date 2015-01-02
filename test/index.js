@@ -149,3 +149,28 @@ describe('query', function() {
     });
   });
 });
+
+describe('setting pg directly', function() {
+  it('can be set', function(done) {
+    query.pg = {
+      connect: function(args, cb) {
+        var fakeClient = {
+          query: function(q, cb) {
+            assert.equal(q.text, 'SELECT NOW()')
+            delete query.pg
+            cb(null, {rows: []})
+          }
+        }
+        cb(null, fakeClient, done)
+      }
+    }
+    query('SELECT NOW()')
+  })
+
+  it('can be unset', function(done) {
+    query('SELECT NOW()', function(err, rows) {
+      assert.equal(rows.length, 1)
+      done()
+    })
+  })
+})
