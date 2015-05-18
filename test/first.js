@@ -1,6 +1,7 @@
 var assert = require('assert');
 var ok = require('okay');
 var query = require('../');
+var when = require('when');
 var pg = require('pg');
 pg.defaults.poolSize = 1;
 
@@ -43,6 +44,22 @@ describe('query.first', function() {
       assert.equal(res.name, 'brian')
       done()
     }))
+  })
+
+  it('returns a promise if no callback is passed', function(done) {
+    var promise = query.first('SELECT name FROM something WHERE age = 30');
+    assert(when.isPromiseLike(promise));
+    promise.then(function(res) {
+      assert.equal(res.name, 'brian');
+    }).ensure(done);
+  })
+
+  it('does not return a promise if callback is passed', function(done) {
+    var noPromise = query.first('SELECT name FROM something WHERE age = 30', function(err, res) {
+      assert(!when.isPromiseLike(noPromise));
+      assert.equal(res.name, 'brian');
+      done();
+    });
   })
 
   //keep this test last. it blows the connection away on error

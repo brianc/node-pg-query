@@ -133,8 +133,7 @@ describe('query', function() {
         assert(util.isArray(rows));
         assert.equal(result.rows.length, 1);
         assert.equal(rows, result.rows);
-        done();
-      }).otherwise(done);
+      }).ensure(done);
     });
 
     it('does not return a promise if callback is passed', function(done) {

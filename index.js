@@ -16,7 +16,6 @@ var nodefn = require('when/node');
 var util = require('util')
 
 var Query = function() {
-  this.name = null;
   this.text = null;
   this.values = null;
 }
@@ -75,7 +74,13 @@ query.first = function(text, values, cb) {
   if(values && !util.isArray(values)) {
     values = [values]
   }
-  query(text, values, function(err, rows) {
-    return cb(err, rows ? rows[0] : null)
-  })
+  if(typeof cb === 'undefined') {
+    return query(text, values).spread(function(rows) {
+      return rows ? rows[0] : null;
+    });
+  } else {
+    return query(text, values, function(err, rows) {
+      cb(err, rows ? rows[0] : null)
+    });
+  }
 }
