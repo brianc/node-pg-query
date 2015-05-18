@@ -16,7 +16,6 @@ var nodefn = require('when/node');
 var util = require('util')
 
 var Query = function() {
-  this.name = null;
   this.text = null;
   this.values = null;
 }

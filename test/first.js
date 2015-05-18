@@ -51,8 +51,7 @@ describe('query.first', function() {
     assert(when.isPromiseLike(promise));
     promise.then(function(res) {
       assert.equal(res.name, 'brian');
-      done();
-    }).otherwise(done);
+    }).ensure(done);
   })
 
   it('does not return a promise if callback is passed', function(done) {
