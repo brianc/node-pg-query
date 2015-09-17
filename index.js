@@ -21,7 +21,12 @@ var Query = function() {
   this.values = null;
 }
 
-var query = module.exports = function(text, values, cb) {
+function connection(connectionParameters){
+  this.connectionParameters = connectionParameters
+}
+
+connection.prototype.query = function(text, values, cb) {
+  var self = this
   var q = new Query();
 
   //normalize params
@@ -45,7 +50,7 @@ var query = module.exports = function(text, values, cb) {
     cb = nodefn.createCallback(defer.resolver);
   }
 
-  (query.pg || pg).connect(query.connectionParameters, ok(cb, function(client, done) {
+  (self.pg || pg).connect(self.connectionParameters, ok(cb, function(client, done) {
     var onError = function(err) {
       done(err);
       cb(err);
@@ -55,7 +60,7 @@ var query = module.exports = function(text, values, cb) {
       cb(null, res.rows, res);
     };
     var qry = client.query(q, ok(onError, onSuccess));
-    query.before(qry, client);
+    self.before(qry, client);
   }));
   if(defer) {
     return defer.promise;
@@ -63,11 +68,11 @@ var query = module.exports = function(text, values, cb) {
   return q;
 };
 
-query.before = function(query, client) {
+connection.prototype.before = function(query, client) {
 
 };
 
-query.first = function(text, values, cb) {
+connection.prototype.first = function(text, values, cb) {
   if(typeof values == 'function') {
     cb = values
     values = []
@@ -75,7 +80,12 @@ query.first = function(text, values, cb) {
   if(values && !util.isArray(values)) {
     values = [values]
   }
-  query(text, values, function(err, rows) {
+  this.query(text, values, function(err, rows) {
     return cb(err, rows ? rows[0] : null)
   })
+}
+
+module.exports = function(connectionParameters){
+  var queryConnection = new connection(connectionParameters)
+  return queryConnection
 }
