@@ -21,7 +21,7 @@ var Query = function() {
   this.values = null;
 }
 
-var query = module.exports = function(text, values, cb) {
+function innerQuery(connectionParameters, text, values, cb) {
   var q = new Query();
 
   //normalize params
@@ -45,7 +45,7 @@ var query = module.exports = function(text, values, cb) {
     cb = nodefn.createCallback(defer.resolver);
   }
 
-  (query.pg || pg).connect(query.connectionParameters, ok(cb, function(client, done) {
+  (query.pg || pg).connect(connectionParameters, ok(cb, function(client, done) {
     var onError = function(err) {
       done(err);
       cb(err);
@@ -63,9 +63,15 @@ var query = module.exports = function(text, values, cb) {
   return q;
 };
 
+var query = module.exports = function(text, values, cb) {
+    return innerQuery(query.connectionParameters, text, values, cb);
+};
+
 query.before = function(query, client) {
 
 };
+
+query.ownConnection = innerQuery;
 
 query.first = function(text, values, cb) {
   if(typeof values == 'function') {
