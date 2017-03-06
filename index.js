@@ -35,7 +35,7 @@ var query = module.exports = function(text, values, cb) {
     q.values = values;
   } else if(typeof text === 'object') {
     //support toQuery and object style interface
-    q = text.toQuery ? text.toQuery() : text;
+    q = text.toQuery ? text.toQuery() : (text.toParam ? text.toParam() : text.toString());
   }
 
 
